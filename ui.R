@@ -44,7 +44,11 @@ shinyUI(
           )
         ),
         column(
-          6,
+          4,
+          htmlOutput("mapa")
+        ),
+        column(
+          4,
           DT::dataTableOutput("tablaEstadosF")
         )
       )
