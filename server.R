@@ -14,6 +14,15 @@ tablaResultados<-reactive({
   fenviosDia<-input$enviosDia
   fenviosMes<-input$enviosMes
   fenviosAno<-input$enviosAno
+  fdestinatarioDia<-input$destinatarioDia
+  fdestinatarioMes<-input$destinatarioMes
+  fdestinatarioAno<-input$destinatarioAno
+  fpaisDia<-input$paisDia
+  fpaisMes<-input$paisMes
+  fpaisAno<-input$paisAno
+  fsucursalDia<-input$sucursalDia
+  fsucursalMes<-input$sucursalMes
+  fsucursalAno<-input$sucursalAno
   
   tabla1<-datos %>%
     filter(montoDia<fmontoDia,
@@ -21,7 +30,16 @@ tablaResultados<-reactive({
            montoAno<fmontoAno,
            enviosDia<fenviosDia,
            enviosMes<fenviosMes,
-           enviosAno<fenviosAno
+           enviosAno<fenviosAno,
+           destinatarioDia<fdestinatarioDia,
+           destinatarioMes<fdestinatarioMes,
+           destinatarioAno<fdestinatarioAno,
+           paisDia<fpaisDia,
+           paisMes<fpaisMes,
+           paisAno<fpaisAno,
+           sucursalDia<fsucursalDia,
+           sucursalMes<fsucursalMes,
+           sucursalAno<fsucursalAno
     ) %>%
     group_by(estado) %>%
     summarize(montoAjustado=sum(montoAno)) %>%
@@ -53,8 +71,6 @@ map<-gvisGeoChart(tablaResultados(),"Estado","Porcentaje","Monto Original",
                                displayMode="regions",
                                resolution="provinces",
                                width=500,height=500))
-
-
 })
 
 

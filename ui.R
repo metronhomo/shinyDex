@@ -8,43 +8,114 @@ shinyUI(
       "Impacto de filtros",
       fluidRow(
         column(
-          3,
+          2,
           wellPanel(
-            h4("Filtros"),
+            style = "background-color: #ffffff;",
             sliderInput(
               "enviosDia",
-              "Número máximo de envíos por día",
+              "envíos por día",
               0,100,10,step=1
             ),
             sliderInput(
               "enviosMes",
-              "Número máximo de envíos por mes",
+              "envíos por mes",
               0,500,20,step=1
             ),
             sliderInput(
               "enviosAno",
-              "Número máximo de envíos por año",
+              "envíos por año",
               0,1000,50,step=1
-            ),
+            )
+          )
+        ),
+        column(
+          2,
+          wellPanel(
+            style = "background-color: #ffffff;",
             sliderInput(
               "montoDia",
-              "Monto máximo por día",
+              "monto por día",
               0,100000,10000,step=1000
             ),
             sliderInput(
               "montoMes",
-              "Monto máximo por mes",
+              "monto por mes",
               0,1000000,10000,step=1000
             ),
             sliderInput(
               "montoAno",
-              "Monto máximo por año",
+              "monto por año",
               0,10000000,10000,step=1000
             )
           )
         ),
         column(
-          4,
+          2,
+          wellPanel(
+            style = "background-color: #ffffff;",
+            sliderInput(
+              "destinatarioDia",
+              "beneficiarios por día",
+              0,5,2,step=1
+            ),
+            sliderInput(
+              "destinatarioMes",
+              "beneficiarios por mes",
+              0,10,5,step=1
+            ),
+            sliderInput(
+              "destinatarioAno",
+              "beneficiarios por año",
+              0,50,10,step=1
+            )
+          )
+        ),
+        column(
+          2,
+          wellPanel(
+            style = "background-color: #ffffff;",
+            sliderInput(
+              "paisDia",
+              "paises por día",
+              0,5,1,step=1
+            ),
+            sliderInput(
+              "paisMes",
+              "paises por mes",
+              0,10,2,step=1
+            ),
+            sliderInput(
+              "paisAno",
+              "paises por año",
+              0,50,10,step=1
+            )
+          )
+        ),
+        column(
+          2,
+          wellPanel(
+            style = "background-color: #ffffff;",
+            sliderInput(
+              "sucursalDia",
+              "sucursales por día",
+              0,5,1,step=1
+            ),
+            sliderInput(
+              "sucursalMes",
+              "sucursales por mes",
+              0,10,2,step=1
+            ),
+            sliderInput(
+              "sucursalAno",
+              "sucursales por año",
+              0,50,10,step=1
+            )
+          )
+        )
+      ),
+      fluidRow(
+        column(
+          6,
           htmlOutput("mapa")
         ),
         column(

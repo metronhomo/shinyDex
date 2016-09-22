@@ -12,6 +12,7 @@ library(dplyr)
 datos<-datosOriginales %>%
   select(tipoOperacion=FCTIPOOPERACION,
          idEnvio=NO_CLIENTE_REMITENTE,
+         idPago=NO_CLIENTE_BENEF,
          monto=FNMONTOENVIO,
          comision=FNCOMISIONMO,
          fechaEnvio=FECHA_ENVIO,
@@ -19,7 +20,8 @@ datos<-datosOriginales %>%
          estadoEnvio=FCESTADOORIGEN,
          estadoPago=FCESTADODESTINO,
          sucursalEnvio=FCNOMBRESUCURSALENVIO,
-         sucursalPago=FCNOMBRESUCURSALDESTINO
+         sucursalPago=FCNOMBRESUCURSALDESTINO,
+         paisPago=FCPAISDESTINO
          ) %>%
   filter(tipoOperacion=='ENVIO')
 
@@ -102,6 +104,93 @@ head(datosCliente)
 llave<-match(datosCliente$id,datosOriginales$NO_CLIENTE_REMITENTE)
 datosCliente$estado<-datosOriginales$FCESTADOORIGEN[llave]
 
+#número de destinatarios--------------------------------------------------------------------------------------------------
+
+destinoDia<-datos %>%
+  mutate(envioMesDia=paste0(mesEnvio,'_',diaEnvio,'_',idPago)) %>%
+  group_by(idEnvio,envioMesDia) %>%
+  summarize(envios=n()) %>%
+  group_by(idEnvio) %>%
+  summarise(enviosMaximosDia=max(envios,na.rm=T)) %>%
+  as.data.frame()
+
+destinoMes<-datos %>%
+  group_by(idEnvio,mesEnvio,idPago) %>%
+  summarize(envios=n()) %>%
+  group_by(idEnvio) %>%
+  summarise(enviosMaximosMes=max(envios,na.rm=T)) %>%
+  as.data.frame()
+
+destinoAno<-datos %>%
+  group_by(idEnvio,idPago) %>%
+  summarize(envios=n()) %>%
+  group_by(idEnvio) %>%
+  summarise(enviosMaximosDia=max(envios,na.rm=T)) %>%
+  as.data.frame()
+
+datosCliente$destinatarioDia<-destinoDia[,2]
+datosCliente$destinatarioMes<-destinoMes[,2]
+datosCliente$destinatarioAno<-destinoAno[,2]
+
+#número de paises destino--------------------------------------------------------------------------------------------------
+
+paisDia<-datos %>%
+  mutate(envioMesDia=paste0(mesEnvio,'_',diaEnvio,'_',paisPago)) %>%
+  group_by(idEnvio,envioMesDia) %>%
+  summarize(envios=n()) %>%
+  group_by(idEnvio) %>%
+  summarise(enviosMaximosDia=max(envios,na.rm=T)) %>%
+  as.data.frame()
+
+paisMes<-datos %>%
+  group_by(idEnvio,mesEnvio,paisPago) %>%
+  summarize(envios=n()) %>%
+  group_by(idEnvio) %>%
+  summarise(enviosMaximosMes=max(envios,na.rm=T)) %>%
+  as.data.frame()
+
+paisAno<-datos %>%
+  group_by(idEnvio,paisPago) %>%
+  summarize(envios=n()) %>%
+  group_by(idEnvio) %>%
+  summarise(enviosMaximosDia=max(envios,na.rm=T)) %>%
+  as.data.frame()
+
+datosCliente$paisDia<-paisDia[,2]
+datosCliente$paisMes<-paisMes[,2]
+datosCliente$paisAno<-paisAno[,2]
+
+#número de sucursales destino--------------------------------------------------------------------------------------------------
+
+sucursalDia<-datos %>%
+  mutate(envioMesDia=paste0(mesEnvio,'_',diaEnvio,'_',sucursalPago)) %>%
+  group_by(idEnvio,envioMesDia) %>%
+  summarize(envios=n()) %>%
+  group_by(idEnvio) %>%
+  summarise(enviosMaximosDia=max(envios,na.rm=T)) %>%
+  as.data.frame()
+
+sucrursalMes<-datos %>%
+  group_by(idEnvio,mesEnvio,sucursalPago) %>%
+  summarize(envios=n()) %>%
+  group_by(idEnvio) %>%
+  summarise(enviosMaximosMes=max(envios,na.rm=T)) %>%
+  as.data.frame()
+
+sucrusalAno<-datos %>%
+  group_by(idEnvio,sucursalPago) %>%
+  summarize(envios=n()) %>%
+  group_by(idEnvio) %>%
+  summarise(enviosMaximosDia=max(envios,na.rm=T)) %>%
+  as.data.frame()
+
+datosCliente$sucursalDia<-sucursalDia[,2]
+datosCliente$sucursalMes<-sucrursalMes[,2]
+datosCliente$sucursalAno<-sucrusalAno[,2]
+
+
+
+
 #pongo los nombres correctos a cada uno de los estados------------------------------------------------------------------
 #para que sean compatibles con googleVis
 
@@ -110,7 +199,7 @@ library(stringr)
 datosCliente$estado<-as.character(datosCliente$estado)
 unique(datosCliente$estado)
 datosCliente$estado<-str_replace_all(datosCliente$estado,"ESTADO DE MEXICO","ESTADO DE MÉXICO")
-datosCliente$estado<-str_replace_all(datosCliente$estado,"D.F.","")
+datosCliente$estado<-str_replace_all(datosCliente$estado,"D.F.","DISTRITO FEDERAL")
 datosCliente$estado<-str_replace_all(datosCliente$estado,"NUEVO LEON","NUEVO LEÓN")
 datosCliente$estado<-str_replace_all(datosCliente$estado,"MICHOACAN","MICHOACÁN")
 datosCliente$estado<-str_replace_all(datosCliente$estado,"SAN LUIS POTOSI","SAN LUÍS POTOSÍ")
@@ -121,10 +210,3 @@ datosCliente$estado<-str_replace_all(datosCliente$estado,"QUERETARO","QUERÉTARO
 #guardo los resultados---------------------------------------------------------------------------------------
 
 saveRDS(datosCliente,'data/datosCliente.rds')
-
-tablaEstados<-datosCliente %>%
-  group_by(estado) %>%
-  summarize(montoOriginal=sum(montoAno)) %>%
-  as.data.frame()
-
-
